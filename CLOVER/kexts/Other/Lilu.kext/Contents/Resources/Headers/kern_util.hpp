@@ -35,6 +35,13 @@
 extern bool ADDPR(debugEnabled);
 
 /**
+ *  Debugging print delay used as an ugly hack around printf bufferisation,
+ *  which results in messages not appearing in the boot log.
+ *  Use liludelay=1000 (1 second) boot-arg to put a second after each message.
+ */
+extern uint32_t ADDPR(debugPrintDelay);
+
+/**
  *  Kernel version major
  */
 extern const int version_major;
@@ -62,8 +69,10 @@ extern proc_t kernproc;
  */
 #define SYSLOG_COND(cond, module, str, ...)                                                          \
 	do {                                                                                             \
-		if (cond)                                                                                    \
-			IOLog( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
+	    if (cond) {                                                                                  \
+	        IOLog( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
+	        if (ADDPR(debugPrintDelay) > 0) IOSleep(ADDPR(debugPrintDelay));                         \
+	    }                                                                                            \
 	} while (0)
 
 /**
@@ -83,10 +92,10 @@ extern proc_t kernproc;
  */
 #define SYSTRACE_COND(cond, module, str, ...)                                                                        \
 	do {                                                                                                             \
-		if (cond) {                                                                                                  \
-			SYSLOG(module, str, ## __VA_ARGS__);                                                                     \
-			OSReportWithBacktrace( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
-		}                                                                                                            \
+	    if (cond) {                                                                                                  \
+	        SYSLOG(module, str, ## __VA_ARGS__);                                                                     \
+		    OSReportWithBacktrace( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
+	    }                                                                                                            \
 	} while (0)
 
 /**
@@ -106,8 +115,8 @@ extern proc_t kernproc;
  */
 #define PANIC_COND(cond, module, str, ...)                                                             \
 	do {                                                                                               \
-		if (cond)                                                                                      \
-			(panic)( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
+	    if (cond)                                                                                      \
+	        (panic)( "%s%10s" str "\n", xStringify(PRODUCT_NAME) ": ", module " @ ", ## __VA_ARGS__);  \
 	} while (0)
 
 /**
@@ -129,7 +138,7 @@ extern proc_t kernproc;
  */
 #define DBGLOG_COND(cond, module, str, ...)                                                     \
 	do {                                                                                        \
-		SYSLOG_COND(ADDPR(debugEnabled) && (cond), module, "%s" str, "(DBG) ", ## __VA_ARGS__); \
+	    SYSLOG_COND(ADDPR(debugEnabled) && (cond), module, "%s" str, "(DBG) ", ## __VA_ARGS__); \
 	} while (0)
 
 /**
@@ -149,7 +158,7 @@ extern proc_t kernproc;
  */
 #define DBGTRACE_COND(cond, module, str, ...)                                                     \
 	do {                                                                                          \
-		SYSTRACE_COND(ADDPR(debugEnabled) && (cond), module, "%s" str, "(DBG) ", ## __VA_ARGS__); \
+	    SYSTRACE_COND(ADDPR(debugEnabled) && (cond), module, "%s" str, "(DBG) ", ## __VA_ARGS__); \
 	} while (0)
 
 /**
@@ -176,6 +185,28 @@ extern proc_t kernproc;
 #define CASTKADDR(x) \
 	static_cast<uint32_t>(reinterpret_cast<uint64_t>(x) >> 32), \
 	static_cast<uint32_t>(reinterpret_cast<uint64_t>(x))
+
+/**
+ *  Macros to print the UUID
+ */
+#define PRIUUID "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X"
+#define CASTUUID(uuid) \
+	reinterpret_cast<const uint8_t *>(uuid)[0], \
+	reinterpret_cast<const uint8_t *>(uuid)[1], \
+	reinterpret_cast<const uint8_t *>(uuid)[2], \
+	reinterpret_cast<const uint8_t *>(uuid)[3], \
+	reinterpret_cast<const uint8_t *>(uuid)[4], \
+	reinterpret_cast<const uint8_t *>(uuid)[5], \
+	reinterpret_cast<const uint8_t *>(uuid)[6], \
+	reinterpret_cast<const uint8_t *>(uuid)[7], \
+	reinterpret_cast<const uint8_t *>(uuid)[8], \
+	reinterpret_cast<const uint8_t *>(uuid)[9], \
+	reinterpret_cast<const uint8_t *>(uuid)[10], \
+	reinterpret_cast<const uint8_t *>(uuid)[11], \
+	reinterpret_cast<const uint8_t *>(uuid)[12], \
+	reinterpret_cast<const uint8_t *>(uuid)[13], \
+	reinterpret_cast<const uint8_t *>(uuid)[14], \
+	reinterpret_cast<const uint8_t *>(uuid)[15]
 
 /**
  *  Export function or symbol for linking
@@ -207,6 +238,16 @@ EXPORT const char *strstr(const char *stack, const char *needle, size_t len=0);
  *  @return character address if there or null
  */
 EXPORT char *strrchr(const char *stack, int ch);
+
+/**
+ *  XNU kernel implementation of a C-standard qsort function normally not exported by the kernel.
+ *
+ *  @param a    array to sort
+ *  @param n    array length
+ *  @param es   array element size
+ *  @param cmp  array element comparator
+ */
+EXPORT void qsort(void *a, size_t n, size_t es, int (*cmp)(const void *, const void *));
 
 /**
  *  Count array elements
@@ -242,7 +283,8 @@ enum KernelVersion {
 	Yosemite      = 14,
 	ElCapitan     = 15,
 	Sierra        = 16,
-	HighSierra    = 17
+	HighSierra    = 17,
+	Mojave        = 18,
 };
 
 /**
@@ -306,6 +348,24 @@ inline T alignValue(T size, T align = 4096) {
 }
 
 /**
+ *  This is an ugly replacement to std::find_if, allowing you
+ *  to check whether a container consists only of value values.
+ *
+ *  @param in     container
+ *  @param size   container size
+ *  @param value  value to look for
+ *
+ *  @return true if an element different from value was found
+ */
+template <typename T, typename Y>
+inline bool findNotEquals(T &in, size_t size, Y value) {
+	for (size_t i = 0; i < size; i++)
+		if (in[i] != value)
+			return true;
+	return false;
+}
+
+/**
  *  Returns non-null string when they can be null
  *
  *  @param str  original string
@@ -314,6 +374,14 @@ inline T alignValue(T size, T align = 4096) {
  */
 inline const char *safeString(const char *str) {
 	return str ? str : "(null)";
+}
+
+/**
+ *  A shorter form of writing reinterpret_cast<decltype(&org)>(ptr)
+ */
+template <typename T>
+inline T FunctionCast(T org, mach_vm_address_t ptr) {
+	return reinterpret_cast<T>(ptr);
 }
 
 /**
@@ -496,12 +564,12 @@ public:
 	 *
 	 *  @return true on success
 	 */
-	bool erase(size_t index) {
+	bool erase(size_t index, bool free=true) {
 		deleter(ptr[index]);
 		if (--cnt != index)
 			lilu_os_memmove(&ptr[index], &ptr[index + 1], (cnt - index) * sizeof(T));
 
-		if (cnt == 0) {
+		if (free && cnt == 0) {
 			kern_os_free(ptr);
 			ptr = nullptr;
 			rsvd = 0;
@@ -563,5 +631,56 @@ public:
 		}
 	}
 };
+
+/**
+ *  Slightly non-standard helpers to get the date in a YYYY-MM-DD format.
+ */
+template <size_t i>
+inline constexpr char getBuildYear() {
+	static_assert(i < 4, "Year consists of four digits");
+	return __DATE__[7+i];
+}
+
+template <size_t i>
+inline constexpr char getBuildMonth() {
+	static_assert(i < 2, "Month consists of two digits");
+	auto mon = *reinterpret_cast<const uint32_t *>(__DATE__);
+	switch (mon) {
+		case ' naJ':
+			return "01"[i];
+		case ' beF':
+			return "02"[i];
+		case ' raM':
+			return "03"[i];
+		case ' rpA':
+			return "04"[i];
+		case ' yaM':
+			return "05"[i];
+		case ' nuJ':
+			return "06"[i];
+		case ' luJ':
+			return "07"[i];
+		case ' guA':
+			return "08"[i];
+		case ' peS':
+			return "09"[i];
+		case ' tcO':
+			return "10"[i];
+		case ' voN':
+			return "11"[i];
+		case ' ceD':
+			return "12"[i];
+	}
+
+	return '0';
+}
+
+template <size_t i>
+inline constexpr char getBuildDay() {
+	static_assert(i < 2, "Day consists of two digits");
+	if (i == 0 && __DATE__[4+i] == ' ')
+		return '0';
+	return __DATE__[4+i];
+}
 
 #endif /* kern_util_hpp */

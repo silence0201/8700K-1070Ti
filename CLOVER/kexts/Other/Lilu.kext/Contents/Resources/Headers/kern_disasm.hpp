@@ -22,6 +22,7 @@
 #include <mach/vm_types.h>
 
 class Disassembler {
+#ifdef LILU_ADVANCED_DISASSEMBLY
 	/**
 	 *  Because captsone handle can be 0
 	 */
@@ -30,7 +31,8 @@ class Disassembler {
 	/**
 	 *  Internal capstone handle
 	 */
-	size_t handle;
+	size_t handle {};
+#endif
 
 	/**
 	 *  Max instruction size

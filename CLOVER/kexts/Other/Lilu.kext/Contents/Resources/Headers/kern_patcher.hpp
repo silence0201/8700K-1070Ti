@@ -41,7 +41,8 @@ public:
 		PointerRange,
 		AlreadyDone,
 		LockError,
-		Unsupported
+		Unsupported,
+		InvalidSymbolFound
 	};
 	
 	/**
@@ -166,7 +167,36 @@ public:
 	 *  @return running symbol address or 0
 	 */
 	EXPORT mach_vm_address_t solveSymbol(size_t id, const char *symbol);
-	
+
+	/**
+	 *  Solve a kinfo symbol in range with designated type
+	 *
+	 *  @param id      loaded kinfo id
+	 *  @param symbol  symbol to solve
+	 *  @param start   start address range
+	 *  @param size    address range size
+	 *  @param crash   kernel panic on invalid non-zero address
+	 *
+	 *  @return running symbol address or 0 casted to type T (mach_vm_address_t)
+	 */
+	template <typename T = mach_vm_address_t>
+	inline T solveSymbol(size_t id, const char *symbol, mach_vm_address_t start, size_t size, bool crash=false) {
+		auto addr = solveSymbol(id, symbol);
+		if (addr) {
+			if (addr >= start && addr < start + size)
+				return (T)addr;
+
+			code = Error::InvalidSymbolFound;
+			SYSTRACE("patcher", "address " PRIKADDR " is out of range " PRIKADDR " with size %lX",
+				CASTKADDR(addr), CASTKADDR(start), size);
+
+			PANIC_COND(crash, "patcher", "address " PRIKADDR " is out of range " PRIKADDR " with size %lX",
+				CASTKADDR(addr), CASTKADDR(start), size);
+		}
+
+		return (T)nullptr;
+	}
+
 	/**
 	 *  Hook kext loading and unloading to access kexts at early stage
 	 */
@@ -292,6 +322,73 @@ public:
 		return false;
 	}
 
+	/**
+	 *  Route request to simplify casting and error handling
+	 *  See routeMultiple.
+	 *
+	 *  symbol  symbol to lookup
+	 *  from    solved symbol (assigned by routeMultiple)
+	 *  to      destination address
+	 *  org     trampoline storage to the original symbol
+	 */
+	struct RouteRequest {
+		const char *symbol {nullptr};
+		mach_vm_address_t from {0};
+		const mach_vm_address_t to {0};
+		mach_vm_address_t *org {nullptr};
+
+		/**
+		 *  Construct RouteRequest for wrapping a function
+		 *  @param s  symbol to lookup
+		 *  @param t  destination address
+		 *  @param o  trampoline storage to the original symbol
+		 */
+		template <typename T>
+		RouteRequest(const char *s, T t, mach_vm_address_t &o) :
+			symbol(s), to(reinterpret_cast<mach_vm_address_t>(t)), org(&o) { }
+
+		/**
+		 *  Construct RouteRequest for routing a function
+		 *  @param s  symbol to lookup
+		 *  @param t  destination address
+		 */
+		template <typename T>
+		RouteRequest(const char *s, T t) :
+			symbol(s), to(reinterpret_cast<mach_vm_address_t>(t)) { }
+	};
+
+	/**
+	 *  Simple route multiple functions with basic error handling
+	 *
+	 *  @param id           kernel item identifier
+	 *  @param requests     an array of requests to replace
+	 *  @param num          requests array size
+	 *  @param start        start address range
+	 *  @param size         address range size
+	 *  @param kernelRoute  kernel change requiring memory protection changes and patch reverting at unload
+	 *  @param force        continue on first error
+	 *
+	 *  @return false if it at least one error happened
+	 */
+	EXPORT bool routeMultiple(size_t id, RouteRequest *requests, size_t num, mach_vm_address_t start=0, size_t size=0, bool kernelRoute=true, bool force=false);
+
+	/**
+	 *  Simple route multiple functions with basic error handling
+	 *
+	 *  @param id           kernel item identifier
+	 *  @param requests     an array of requests to replace
+	 *  @param start        start address range
+	 *  @param size         address range size
+	 *  @param kernelRoute  kernel change requiring memory protection changes and patch reverting at unload
+	 *  @param force        continue on first error
+	 *
+	 *  @return false if it at least one error happened
+	 */
+	template <size_t N>
+	inline bool routeMultiple(size_t id, RouteRequest (&requests)[N], mach_vm_address_t start=0, size_t size=0, bool kernelRoute=true, bool force=false) {
+		return routeMultiple(id, requests, N, start, size, kernelRoute, force);
+	}
+
 private:
 
 	/**
@@ -307,7 +404,7 @@ private:
 	/**
 	 *  Offset to tempExecutableMemory that is safe to use
 	 */
-	off_t tempExecutableMemoryOff {0};
+	size_t tempExecutableMemoryOff {0};
 	
 	/**
 	 *  Patcher status
@@ -395,7 +492,7 @@ private:
 	 *  Jump instruction sizes
 	 */
 	static constexpr size_t SmallJump {1 + sizeof(int32_t)};
-	static constexpr size_t LongJump {2 * sizeof(uint64_t)};
+	static constexpr size_t LongJump {6 + sizeof(uint64_t)};
 	
 	/**
 	 *  Possible kernel paths
