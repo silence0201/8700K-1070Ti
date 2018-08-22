@@ -1,4 +1,4 @@
-###Drivers64UEFI目录下的驱动作用：
+### Drivers64UEFI目录下的驱动作用：
 
 （选项A）BIOS启动过程中要用到drivers32或drivers64目录  
 
@@ -8,7 +8,7 @@
 必须要提的一点是这些驱动程序只在bootloader运行时有效，
 不会影响最终启动的操作系统。
 
-###drivers64UEFI目录下的驱动：
+### drivers64UEFI目录下的驱动：
 
 CsmVideoDxe-64.efi ，Clover图形界面的图像驱动，可以有更多的分辨率选择。
 （仅限于启动界面）。他基于UEFI BIOS的CSM模块，因此需要CSM可用。这个驱动
