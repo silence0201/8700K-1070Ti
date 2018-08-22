@@ -12,17 +12,15 @@
 			<false/>
 			<key>Fixes</key>
 			<dict>
-				<key>FixHeaders</key>
-				<true/>
 				<key>#Comment-IRQ Fix</key>
 				<string>The following fixes may be needed for onboard audio/USB/etc</string>
-				<key>FixTMR</key>
-				<false/>
-				<key>FixRTC</key>
+				<key>FixHPET</key>
 				<false/>
 				<key>FixIPIC</key>
 				<false/>
-				<key>FixHPET</key>
+				<key>FixRTC</key>
+				<false/>
+				<key>FixTMR</key>
 				<false/>
 			</dict>
 			<key>Patches</key>
@@ -93,13 +91,13 @@
 		<key>Debug</key>
 		<false/>
 		<key>DefaultVolume</key>
-		<string>macOS10132</string>
+		<string>Mac OS</string>
 		<key>Legacy</key>
 		<string>PBR</string>
 		<key>Secure</key>
 		<false/>
 		<key>Timeout</key>
-		<integer>5</integer>
+		<integer>10</integer>
 		<key>XMPDetection</key>
 		<string>Yes</string>
 	</dict>
@@ -113,7 +111,7 @@
 		<key>Audio</key>
 		<dict>
 			<key>Inject</key>
-			<string>3</string>
+			<integer>3</integer>
 			<key>ResetHDA</key>
 			<true/>
 		</dict>
@@ -133,6 +131,7 @@
 		<array>
 			<string>\EFI\BOOT\BOOTX64.EFI</string>
 			<string>Windows</string>
+			<string>Recovery</string>
 		</array>
 		<key>Language</key>
 		<string>zh_CN:0</string>
