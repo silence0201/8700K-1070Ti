@@ -98,6 +98,14 @@ public:
 		bool sys[SysFlagNum] {};
 		bool user[UserFlagNum] {};
 		size_t loadIndex {Unloaded}; // Updated after loading
+
+		/**
+		 *  Disable this info from being used
+		 *  May be called from onPatcherLoad callbacks to disable certain kexts
+		 */
+		void switchOff() {
+			sys[KernelPatcher::KextInfo::Disabled] = true;
+		}
 	};
 
 	static_assert(sizeof(KextInfo) == 5 * sizeof(size_t), "KextInfo is no longer ABI compatible");
@@ -269,6 +277,15 @@ public:
 	 *  @param patch patch to apply
 	 */
 	EXPORT void applyLookupPatch(const LookupPatch *patch);
+
+	/**
+	 *  Apply a find/replace patch with additional constraints
+	 *
+	 *  @param patch              patch to apply
+	 *  @param startingAddress    start with this address (or kext/kernel lowest address)
+	 *  @param maxSize            maximum size to look for (or kext/kernel max size)
+	 */
+	EXPORT void applyLookupPatch(const LookupPatch *patch, uint8_t *startingAddress, size_t maxSize);
 #endif /* LILU_KEXTPATCH_SUPPORT */
 
 	/**
