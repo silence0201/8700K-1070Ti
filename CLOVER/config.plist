@@ -28,47 +28,135 @@
 				<dict>
 					<key>Comment</key>
 					<string>change _OSI to XOSI</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
-					<data>X09TSQ==</data>
+					<data>
+					X09TSQ==
+					</data>
 					<key>Replace</key>
-					<data>WE9TSQ==</data>
+					<data>
+					WE9TSQ==
+					</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
 					<string>change EHC1 to EH01</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
-					<data>RUhDMQ==</data>
+					<data>
+					RUhDMQ==
+					</data>
 					<key>Replace</key>
-					<data>RUgwMQ==</data>
+					<data>
+					RUgwMQ==
+					</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
 					<string>change EHC2 to EH02</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
-					<data>RUhDMg==</data>
+					<data>
+					RUhDMg==
+					</data>
 					<key>Replace</key>
-					<data>RUgwMg==</data>
+					<data>
+					RUgwMg==
+					</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
 					<string>change XHCI to XHC</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
-					<data>WEhDSQ==</data>
+					<data>
+					WEhDSQ==
+					</data>
 					<key>Replace</key>
-					<data>WEhDXw==</data>
+					<data>
+					WEhDXw==
+					</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
 					<string>change XHC1 to XHC</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
-					<data>WEhDMQ==</data>
+					<data>
+					WEhDMQ==
+					</data>
 					<key>Replace</key>
-					<data>WEhDXw==</data>
+					<data>
+					WEhDXw==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>change HDAS to HDEF</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Find</key>
+					<data>
+					SERBUw==
+					</data>
+					<key>Replace</key>
+					<data>
+					SERFRg==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>change HECI to IMEI</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Find</key>
+					<data>
+					SEVDSQ==
+					</data>
+					<key>Replace</key>
+					<data>
+					SU1FSQ==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>change GFX0 to IGPU</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Find</key>
+					<data>
+					R0ZYMA==
+					</data>
+					<key>Replace</key>
+					<data>
+					SUdQVQ==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>change PEGP to GFX0</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Find</key>
+					<data>
+					UEVHUA==
+					</data>
+					<key>Replace</key>
+					<data>
+					R0ZYMA==
+					</data>
 				</dict>
 			</array>
 			<key>ReuseFFFF</key>
 			<false/>
 		</dict>
+		<key>FixHeaders</key>
+		<true/>
 		<key>SSDT</key>
 		<dict>
 			<key>DropOem</key>
@@ -87,7 +175,7 @@
 	<key>Boot</key>
 	<dict>
 		<key>Arguments</key>
-		<string>dart=0 kext-dev-mode=1</string>
+		<string>kext-dev-mode=1 shikigva=12 dart=0</string>
 		<key>Debug</key>
 		<false/>
 		<key>DefaultVolume</key>
@@ -97,7 +185,7 @@
 		<key>Secure</key>
 		<false/>
 		<key>Timeout</key>
-		<integer>10</integer>
+		<integer>5</integer>
 		<key>XMPDetection</key>
 		<string>Yes</string>
 	</dict>
@@ -114,6 +202,11 @@
 			<integer>3</integer>
 			<key>ResetHDA</key>
 			<true/>
+		</dict>
+		<key>FakeID</key>
+		<dict>
+			<key>IntelGFX</key>
+			<string>0x59128086</string>
 		</dict>
 		<key>USB</key>
 		<dict>
@@ -157,8 +250,10 @@
 			<key>Tool</key>
 			<false/>
 		</dict>
+		<key>ScreenResolution</key>
+		<string>1920x1080</string>
 		<key>Theme</key>
-		<string>bluemac</string>
+		<string>miku</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>
@@ -167,12 +262,14 @@
 			<key>ATI</key>
 			<false/>
 			<key>Intel</key>
-			<false/>
+			<true/>
 			<key>NVidia</key>
 			<false/>
 		</dict>
 		<key>NvidiaSingle</key>
 		<false/>
+		<key>ig-platform-id</key>
+		<string>0x59120003</string>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
@@ -197,98 +294,162 @@
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x01 (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4UcAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.12.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4UcAQAA</data>
 				<key>Replace</key>
-				<data>9sEBD4UcAQAA</data>
+				<data>
+				9sEBD4UcAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x02 (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4UcAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.12.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4UcAQAA</data>
 				<key>Replace</key>
-				<data>9sECD4UcAQAA</data>
+				<data>
+				9sECD4UcAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x04 (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4UcAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.12.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4UcAQAA</data>
 				<key>Replace</key>
-				<data>9sEED4UcAQAA</data>
+				<data>
+				9sEED4UcAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x08 (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4UcAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.12.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4UcAQAA</data>
 				<key>Replace</key>
-				<data>9sEID4UcAQAA</data>
+				<data>
+				9sEID4UcAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x01, credit RehabMan based on 10.12 patch (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4VBAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.13.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4VBAQAA</data>
 				<key>Replace</key>
-				<data>9sEBD4VBAQAA</data>
+				<data>
+				9sEBD4VBAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x02, credit RehabMan based on 10.12 patch, (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4VBAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.13.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4VBAQAA</data>
 				<key>Replace</key>
-				<data>9sECD4VBAQAA</data>
+				<data>
+				9sECD4VBAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x04, credit RehabMan based on 10.12 patch (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4VBAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.13.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4VBAQAA</data>
 				<key>Replace</key>
-				<data>9sEED4VBAQAA</data>
+				<data>
+				9sEED4VBAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>IONVMeFamily Preferred Block Size 0x10 -&gt; 0x08, credit RehabMan based on 10.12 patch (c) Pike R. Alpha </string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				9sEQD4VBAQAA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.13.x</string>
 				<key>Name</key>
 				<string>com.apple.iokit.IONVMeFamily</string>
-				<key>Find</key>
-				<data>9sEQD4VBAQAA</data>
 				<key>Replace</key>
-				<data>9sEID4VBAQAA</data>
+				<data>
+				9sEID4VBAQAA
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -296,11 +457,17 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>RXh0ZXJuYWw=</data>
+				<data>
+				RXh0ZXJuYWw=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>Name</key>
 				<string>AppleAHCIPort</string>
 				<key>Replace</key>
-				<data>SW50ZXJuYWw=</data>
+				<data>
+				SW50ZXJuYWw=
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -308,23 +475,77 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>AEFQUExFIFNTRAA=</data>
+				<data>
+				AEFQUExFIFNTRAA=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>Name</key>
 				<string>IOAHCIBlockStorage</string>
 				<key>Replace</key>
-				<data>AAAAAAAAAAAAAAA=</data>
+				<data>
+				AAAAAAAAAAAAAAA=
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>change 15 port limit to 26 in XHCI kext</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				g72M/v//EA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.11.x</string>
+				<key>Name</key>
+				<string>com.apple.driver.usb.AppleUSBXHCIPCI</string>
+				<key>Replace</key>
+				<data>
+				g72M/v//Gw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>change 15 port limit to 26 in XHCI kext</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				g710////EA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>com.apple.driver.usb.AppleUSBXHCIPCI</string>
+				<key>Replace</key>
+				<data>
+				g710////Gw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>change 15 port limit to 26 in XHCI kext</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				g32MEA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
 				<key>MatchOS</key>
 				<string>10.13.0,10.13.1,10.13.2,10.13.3</string>
 				<key>Name</key>
 				<string>com.apple.driver.usb.AppleUSBXHCIPCI</string>
-				<key>Find</key>
-				<data>g32MEA==</data>
 				<key>Replace</key>
-				<data>g32MGw==</data>
+				<data>
+				g32MGw==
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -332,7 +553,9 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>g32UDw+DlwQAAA==</data>
+				<data>
+				g32UDw+DlwQAAA==
+				</data>
 				<key>InfoPlistPatch</key>
 				<false/>
 				<key>MatchOS</key>
@@ -340,7 +563,9 @@
 				<key>Name</key>
 				<string>com.apple.driver.usb.AppleUSBXHCI</string>
 				<key>Replace</key>
-				<data>g32UD5CQkJCQkA==</data>
+				<data>
+				g32UD5CQkJCQkA==
+				</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -348,7 +573,9 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>g32IDw+DpwQ=</data>
+				<data>
+				g32IDw+DpwQ=
+				</data>
 				<key>InfoPlistPatch</key>
 				<false/>
 				<key>MatchOS</key>
@@ -356,7 +583,29 @@
 				<key>Name</key>
 				<string>com.apple.driver.usb.AppleUSBXHCI</string>
 				<key>Replace</key>
-				<data>g32IGg+DpwQ=</data>
+				<data>
+				g32IGg+DpwQ=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Boot graphics glitch, 10.13 (credit denskop)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				AQAAdSI=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.13.x</string>
+				<key>Name</key>
+				<string>IOGraphicsFamily</string>
+				<key>Replace</key>
+				<data>
+				AQAA6yI=
+				</data>
 			</dict>
 		</array>
 	</dict>
