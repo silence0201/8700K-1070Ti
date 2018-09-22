@@ -228,6 +228,7 @@
 			<string>\EFI\BOOT\BOOTX64.EFI</string>
 			<string>Preboot</string>
 			<string>Recovery</string>
+			<string>Backup</string>
 		</array>
 		<key>Language</key>
 		<string>zh_CN:0</string>
@@ -249,14 +250,14 @@
 			<key>Legacy</key>
 			<false/>
 			<key>Linux</key>
-			<false/>
+			<true/>
 			<key>Tool</key>
 			<false/>
 		</dict>
 		<key>ScreenResolution</key>
 		<string>1920x1080</string>
 		<key>Theme</key>
-		<string>miku</string>
+		<string>Simple</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>
